@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>OronymKZ — Ultimate Edition</title>
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --p: #0984e3; --s: #00cec9; --bg: #f8f9fa; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; overflow-x: hidden; }
+        
+        /* Эффектный заголовок */
+        header {
+            background: linear-gradient(135deg, rgba(9,132,227,0.9), rgba(0,206,201,0.9)), 
+                        url('https://unsplash.com');
+            height: 50vh; background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center;
+            color: white; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .container { max-width: 1100px; margin: -60px auto 50px; padding: 0 20px; }
+
+        /* Карточка оронима */
+        .card {
+            background: white; border-radius: 25px; display: flex; 
+            margin-bottom: 40px; box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+            overflow: hidden; opacity: 0; transform: translateY(30px); transition: 0.8s;
+        }
+        .card.visible { opacity: 1; transform: translateY(0); }
+
+        .info { flex: 1; padding: 40px; }
+        .map-box { flex: 1; min-height: 400px; background: #e0e0e0; z-index: 1; }
+
+        h2 { color: var(--p); font-size: 2rem; margin-top: 0; }
+        .lang-row { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .warning { background: #fff9db; border-left: 5px solid #fab005; padding: 15px; border-radius: 10px; margin-top: 20px; font-size: 0.9rem; }
+
+        /* Транслитератор */
+        .tool { background: var(--p); color: white; padding: 40px; border-radius: 25px; margin-bottom: 40px; text-align: center; }
+        input { width: 70%; padding: 15px; border-radius: 30px; border: none; font-size: 1.1rem; margin-top: 20px; outline: none; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        #res { margin-top: 15px; font-size: 1.5rem; font-weight: bold; height: 30px; }
+
+        @media (max-width: 800px) { .card { flex-direction: column; } .map-box { min-height: 300px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1 style="font-size: 3.5rem; margin: 0;">Oronym Qazaqstan</h1>
+        <p>Интерактивная карта и цифровая транслитерация</p>
+    </div>
+</header>
+
+<div class="container">
+    <div class="tool">
+        <h3><i class="fas fa-sync"></i> Мгновенный транслитератор</h3>
+        <input type="text" id="inp" placeholder="Введите название (напр. Мұзтау)" oninput="go()">
+        <div id="res"></div>
+    </div>
+
+    <div class="card" id="c1">
+        <div class="info">
+            <h2>Іле Алатауы</h2>
+            <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>İle Alatauy</strong></div>
+            <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Заилийский Алатау</strong></div>
+            <div class="lang-row"><span>🇬🇧 English</span> <strong>Trans-Ili Alatau</strong></div>
+            <div class="warning">
+                <strong>Мағынасы:</strong> Түпкі атауы өңірді сипаттайды, ал "Заилийский" — сыртқы көзқараспен қойылған атау.
+            </div>
+        </div>
+        <div id="m1" class="map-box"></div>
+    </div>
+
+    <div class="card" id="c2">
+        <div class="info">
+            <h2>Мұзтау (Белуха)</h2>
+            <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>Mūztau</strong></div>
+            <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Белуха</strong></div>
+            <div class="lang-row"><span>🇬🇧 English</span> <strong>Mount Belukha</strong></div>
+            <div class="warning">
+                <strong>Мағынасы:</strong> "Мұзтау" — киелі тау. "Белуха" атауы тек оның сыртқы түрін ғана сипаттайды.
+            </div>
+        </div>
+        <div id="m2" class="map-box"></div>
+    </div>
+</div>
+
+<script src="https://unpkg.com"></script>
+<script>
+    // Инициализация карт с задержкой для корректной отрисовки
+    function loadMap(id, loc, text) {
+        let m = L.map(id).setView(loc, 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+        L.marker(loc).addTo(m).bindPopup(text).openPopup();
+        setTimeout(() => { m.invalidateSize(); }, 500);
+    }
+
+    window.onload = () => {
+        loadMap('m1', [43.05, 77.10], 'Іле Алатауы');
+        loadMap('m2', [49.80, 86.58], 'Мұзтау');
+        
+        // Анимация появления
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+        });
+        document.querySelectorAll('.card').forEach(c => observer.observe(c));
+    };
+
+    function go() {
+        const abc = {'а':'a','ә':'ä','б':'b','в':'v','г':'g','ғ':'ğ','д':'d','е':'e','ж':'j','з':'z','и':'i','й':'i','к':'k','қ':'q','л':'l','м':'m','н':'n','ң':'ñ','о':'o','ө':'ö','п':'p','р':'r','с':'s','т':'t','у':'u','ұ':'ū','ү':'ü','х':'x','ы':'y','і':'ı','ш':'ş'};
+        let v = document.getElementById('inp').value.toLowerCase();
+        document.getElementById('res').innerText = v.split('').map(l => abc[l] || l).join('');
+    }
+</script>
+</body>
+</html>

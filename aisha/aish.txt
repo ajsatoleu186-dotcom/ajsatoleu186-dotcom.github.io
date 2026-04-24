@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<title>Қазақстан оронимдері FULL</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+<style>
+body{margin:0;font-family:Arial;background:#0b1220;color:white;}
+header{text-align:center;padding:15px;background:#111827;}
+
+#map{height:500px;}
+
+.panel{
+padding:15px;
+background:#1f2937;
+}
+
+img{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+iframe{
+width:100%;
+height:260px;
+border:none;
+border-radius:10px;
+margin-top:10px;
+}
+
+h2{color:#38bdf8;}
+
+.label{
+background:#38bdf8;
+color:black;
+padding:3px 6px;
+border-radius:6px;
+font-size:12px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏔 Қазақстан оронимдері (интерактив карта)</h1>
+<p>Карта + ақпарат + 3D визуализация</p>
+</header>
+
+<div id="map"></div>
+
+<div class="panel">
+
+<h2 id="title">Ороним таңда</h2>
+<p id="text">Картадағы тауды бас</p>
+
+<img id="img" style="display:none">
+
+<iframe id="map1"></iframe>
+<iframe id="map2"></iframe>
+
+<a id="earth" target="_blank"
+style="display:inline-block;margin-top:10px;padding:8px;background:#22c55e;color:black;border-radius:6px;text-decoration:none;">
+🌍 Google Earth 3D көру
+</a>
+
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+
+let map = L.map('map').setView([48,67],5);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+maxZoom:18
+}).addTo(map);
+
+// ===== FULL DATA =====
+
+const data = [
+
+{
+name:"Алтай таулары",
+coords:[49.8,86],
+img:"altai.jpg",
+text:"📍 Шығыс Қазақстан. Биіктігі 4500 м. Алтай – Қазақстанның ең орманды және минералға бай тау жүйелерінің бірі.",
+m1:"https://www.google.com/maps?q=Altai+Mountains+Kazakhstan&output=embed",
+m2:"https://www.google.com/maps?q=Altai+Mountains&output=embed",
+earth:"https://earth.google.com/web/search/Altai+Mountains"
+},
+
+{
+name:"Тянь-Шань",
+coords:[42.5,78],
+img:"tien.jpg",
+text:"📍 Оңтүстік-шығыс Қазақстан. ‘Аспан таулары’ деп аталады. Мұздықтар мен биік шыңдар көп.",
+m1:"https://www.google.com/maps?q=Tian+Shan+Kazakhstan&output=embed",
+m2:"https://www.google.com/maps?q=Tian+Shan&output=embed",
+earth:"https://earth.google.com/web/search/Tian+Shan"
+},
+
+{
+name:"Іле Алатауы",
+coords:[43.1,77],
+img:"ile.jpg",
+text:"📍 Алматы қаласының оңтүстігі. Биік мұздықты тау жүйесі.",
+m1:"https://www.google.com/maps?q=Ile+Alatau&output=embed",
+m2:"https://www.google.com/maps?q=Almaty+mountains&output=embed",
+earth:"https://earth.google.com/web/search/Ile+Alatau"
+},
+
+{
+name:"Жоңғар Алатауы",
+coords:[45.5,80],
+img:"zhungar.jpg",
+text:"📍 Қазақстан–Қытай шекарасы. Мұздықтар мен өзендер көп.",
+m1:"https://www.google.com/maps?q=Dzungarian+Alatau&output=embed",
+m2:"https://www.google.com/maps?q=Dzungarian+Alatau+range&output=embed",
+earth:"https://earth.google.com/web/search/Dzungarian+Alatau"
+},
+
+{
+name:"Сарыарқа",
+coords:[48,67],
+img:"saryarka.jpg",
+text:"📍 Орталық Қазақстан. Кең дала қыраттары мен аласа таулар.",
+m1:"https://www.google.com/maps?q=Saryarka+Kazakhstan&output=embed",
+m2:"https://www.google.com/maps?q=Central+Kazakhstan+uplands&output=embed",
+earth:"https://earth.google.com/web/search/Saryarka"
+},
+
+{
+name:"Ұлытау",
+coords:[48.6,66.9],
+img:"ulytau.jpg",
+text:"📍 Қазақ тарихының орталығы. Көптеген тарихи оқиғалар осы жерде өткен.",
+m1:"https://www.google.com/maps?q=Ulytau&output=embed",
+m2:"https://www.google.com/maps?q=Ulytau+region&output=embed",
+earth:"https://earth.google.com/web/search/Ulytau"
+},
+
+{
+name:"Мұғалжар",
+coords:[48.5,57],
+img:"mugalzhar.jpg",
+text:"📍 Батыс Қазақстан. Ежелгі аласа таулар жүйесі.",
+m1:"https://www.google.com/maps?q=Mugalzhar+Mountains&output=embed",
+m2:"https://www.google.com/maps?q=West+Kazakhstan+uplands&output=embed",
+earth:"https://earth.google.com/web/search/Mugalzhar"
+},
+
+{
+name:"Маңғыстау",
+coords:[44,52],
+img:"mangystau.jpg",
+text:"📍 Каспий маңы. Құрғақ шөлейт, әктасты таулар.",
+m1:"https://www.google.com/maps?q=Mangystau&output=embed",
+m2:"https://www.google.com/maps?q=Caspian+region+Kazakhstan&output=embed",
+earth:"https://earth.google.com/web/search/Mangystau"
+},
+
+{
+name:"Қаратау",
+coords:[43,69],
+img:"karatau.jpg",
+text:"📍 Оңтүстік Қазақстан. Пайдалы қазбаларға бай.",
+m1:"https://www.google.com/maps?q=Karatau+mountains&output=embed",
+m2:"https://www.google.com/maps?q=South+Kazakhstan+range&output=embed",
+earth:"https://earth.google.com/web/search/Karatau"
+},
+
+{
+name:"Кетпен жотасы",
+coords:[43.3,80],
+img:"ketpen.jpg",
+text:"📍 Іле Алатауы маңы. Орта биіктіктегі жота.",
+m1:"https://www.google.com/maps?q=Ketmen+ridge&output=embed",
+m2:"https://www.google.com/maps?q=Ketmen+Kazakhstan&output=embed",
+earth:"https://earth.google.com/web/search/Ketmen"
+},
+
+{
+name:"Күнгей Алатау",
+coords:[42.8,77],
+img:"kungey.jpg",
+text:"📍 Тянь-Шань жүйесінің бөлігі.",
+m1:"https://www.google.com/maps?q=Kungey+Alatau&output=embed",
+m2:"https://www.google.com/maps?q=Kyrgyzstan+mountains&output=embed",
+earth:"https://earth.google.com/web/search/Kungey+Alatau"
+},
+
+{
+name:"Көкшетау",
+coords:[53.3,69.4],
+img:"kokshetau.jpg",
+text:"📍 Солтүстік Қазақстан. Көлдер мен ормандар аймағы.",
+m1:"https://www.google.com/maps?q=Kokshetau&output=embed",
+m2:"https://www.google.com/maps?q=Burabay+Kazakhstan&output=embed",
+earth:"https://earth.google.com/web/search/Kokshetau"
+},
+
+{
+name:"Баянауыл",
+coords:[50.8,75.7],
+img:"bayan.jpg",
+text:"📍 Павлодар облысы. Туристік аймақ.",
+m1:"https://www.google.com/maps?q=Bayanaul&output=embed",
+m2:"https://www.google.com/maps?q=Pavlodar+region&output=embed",
+earth:"https://earth.google.com/web/search/Bayanaul"
+},
+
+{
+name:"Қарқаралы",
+coords:[49.4,75.5],
+img:"karkaraly.jpg",
+text:"📍 Қарағанды облысы. Орманды тау.",
+m1:"https://www.google.com/maps?q=Karkaraly&output=embed",
+m2:"https://www.google.com/maps?q=Karaganda+region&output=embed",
+earth:"https://earth.google.com/web/search/Karkaraly"
+},
+
+{
+name:"Кент таулары",
+coords:[49.2,74.5],
+img:"kent.jpg",
+text:"📍 Ежелгі тау массиві, геологиялық ескі құрылым.",
+m1:"https://www.google.com/maps?q=Kent+Mountains+Kazakhstan&output=embed",
+m2:"https://www.google.com/maps?q=Central+Kazakhstan+mountains&output=embed",
+earth:"https://earth.google.com/web/search/Kent"
+},
+
+{
+name:"Шыңғыстау",
+coords:[49,80],
+img:"shyngystau.jpg",
+text:"📍 Абай облысы. Қазақ әдебиетімен байланысты тарихи жер.",
+m1:"https://www.google.com/maps?q=Shyngystau&output=embed",
+m2:"https://www.google.com/maps?q=East+Kazakhstan+mountains&output=embed",
+earth:"https://earth.google.com/web/search/Shyngystau"
+}
+
+];
+
+// ===== MAP =====
+
+data.forEach(item=>{
+
+let marker=L.marker(item.coords).addTo(map);
+
+// атауы картада көрінеді
+marker.bindTooltip(item.name,{
+permanent:true,
+direction:"top",
+className:"label"
+});
+
+marker.on('click',function(){
+
+document.getElementById("title").innerText=item.name;
+document.getElementById("text").innerText=item.text;
+
+let img=document.getElementById("img");
+img.src=item.img;
+img.style.display="block";
+
+document.getElementById("map1").src=item.m1;
+document.getElementById("map2").src=item.m2;
+document.getElementById("earth").href=item.earth;
+
+});
+
+});
+
+</script>
+
+</body>
+</html>

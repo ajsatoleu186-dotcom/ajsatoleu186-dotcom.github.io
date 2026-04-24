@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OronymKZ — Ultimate Geo-Digital Project</title>
+    
+    <!-- Leaflet CSS & Fonts -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <link href="https://googleapis.com" rel="stylesheet">
+    <link href="https://cloudflare.com" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0984e3;
+            --secondary: #00cec9;
+            --accent: #6c5ce7;
+            --bg: #f1f2f6;
+            --text: #2d3436;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            margin: 0;
+            color: var(--text);
+            scroll-behavior: smooth;
+        }
+
+        /* Hero Section */
+        header {
+            background: linear-gradient(135deg, rgba(9, 132, 227, 0.85), rgba(108, 92, 231, 0.85)), 
+                        url('https://unsplash.com');
+            height: 60vh;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .hero-content h1 { font-size: 4rem; margin: 0; font-weight: 800; letter-spacing: -2px; }
+        .hero-content p { font-size: 1.2rem; opacity: 0.9; margin-top: 10px; }
+
+        .container { max-width: 1100px; margin: -80px auto 50px; padding: 0 20px; }
+
+        /* Translit Tool */
+        .tool-card {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 60px;
+        }
+        .tool-card h3 { margin-top: 0; color: var(--accent); }
+        .tool-card input {
+            width: 80%; padding: 15px 25px; border-radius: 50px;
+            border: 2px solid #eee; font-size: 1.1rem; outline: none;
+            transition: 0.3s; margin-top: 15px;
+        }
+        .tool-card input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(9,132,227,0.2); }
+        #res { margin-top: 20px; font-size: 1.8rem; font-weight: 700; color: var(--primary); min-height: 40px; }
+
+        /* Oronym Cards */
+        .card {
+            background: white;
+            border-radius: 30px;
+            display: flex;
+            margin-bottom: 50px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+            opacity: 0; transform: translateY(40px); transition: 0.8s ease-out;
+        }
+        .card.visible { opacity: 1; transform: translateY(0); }
+
+        .info { flex: 1.2; padding: 45px; }
+        .map-box { flex: 1; min-height: 450px; background: #e0e0e0; position: relative; }
+
+        h2 { color: var(--primary); font-size: 2.2rem; margin-top: 0; margin-bottom: 25px; }
+        
+        .lang-table { background: #f8f9fa; border-radius: 20px; padding: 20px; margin-bottom: 25px; }
+        .lang-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .lang-row:last-child { border: none; }
+        .lang-row span { font-weight: 700; color: #636e72; }
+
+        .meaning-box {
+            background: #fff9db; border-left: 6px solid #fab005;
+            padding: 20px; border-radius: 15px; font-size: 0.95rem; line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+            .card { flex-direction: column; }
+            .map-box { min-height: 300px; }
+            .hero-content h1 { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="hero-content">
+        <h1>Oronym Qazaqstan</h1>
+        <p>Қазақ оронимдерінің цифрлық және мағыналық архиві</p>
+    </div>
+</header>
+
+<div class="container">
+    
+    <!-- Интерактивті транслитератор -->
+    <div class="tool-card">
+        <h3><i class="fas fa-keyboard"></i> Сөздік транслитератор</h3>
+        <p>Қазақша кез келген атауды жазыңыз:</p>
+        <input type="text" id="inp" placeholder="Мысалы: Сарыарқа" oninput="translit()">
+        <div id="res"></div>
+    </div>
+
+    <!-- 1. Іле Алатауы -->
+    <div class="card">
+        <div class="info">
+            <h2>Іле Алатауы</h2>
+            <div class="lang-table">
+                <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>İle Alatauy</strong></div>
+                <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Заилийский Алатау</strong></div>
+                <div class="lang-row"><span>🇬🇧 English</span> <strong>Trans-Ili Alatau</strong></div>
+            </div>
+            <div class="meaning-box">
+                <strong>Өзгеріс:</strong> "Заилийский" — сыртқы отарлық көзқарас. Негізгі мағынасы таудың Іле өзені бойындағы орналасуын білдіреді.
+            </div>
+        </div>
+        <div id="m1" class="map-box"></div>
+    </div>
+
+    <!-- 2. Мұзтау -->
+    <div class="card">
+        <div class="info">
+            <h2>Мұзтау</h2>
+            <div class="lang-table">
+                <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>Mūztau</strong></div>
+                <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Белуха</strong></div>
+                <div class="lang-row"><span>🇬🇧 English</span> <strong>Mount Belukha</strong></div>
+            </div>
+            <div class="meaning-box">
+                <strong>Өзгеріс:</strong> "Белуха" — тек түсін айтатын жасанды атау. Төл атауы "Мұзтау" киелі, ежелгі мифологиялық мағынаға ие.
+            </div>
+        </div>
+        <div id="m2" class="map-box"></div>
+    </div>
+
+    <!-- 3. Хантәңірі -->
+    <div class="card">
+        <div class="info">
+            <h2>Хантәңірі</h2>
+            <div class="lang-table">
+                <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>Xantəñırı</strong></div>
+                <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Хан-Тенгри</strong></div>
+                <div class="lang-row"><span>🇬🇧 English</span> <strong>Khan Tengri</strong></div>
+            </div>
+            <div class="meaning-box">
+                <strong>Өзгеріс:</strong> Аудармада "Тәңір" (Аспан Иесі) ұғымының терең философиялық мәні жоғалып, жай ғана билеуші есімі ретінде қабылдануда.
+            </div>
+        </div>
+        <div id="m3" class="map-box"></div>
+    </div>
+
+    <!-- 4. Тарбағатай -->
+    <div class="card">
+        <div class="info">
+            <h2>Тарбағатай</h2>
+            <div class="lang-table">
+                <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>Tarbağataı</strong></div>
+                <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Тарбагатай</strong></div>
+                <div class="lang-row"><span>🇬🇧 English</span> <strong>Tarbagatay</strong></div>
+            </div>
+            <div class="meaning-box">
+                <strong>Мағына:</strong> Моңғол тілінен "суырлы тау" дегенді білдіреді. Көптеген тілдерде тек транслитерация беріліп, мағынасы ашылмайды.
+            </div>
+        </div>
+        <div id="m4" class="map-box"></div>
+    </div>
+
+    <!-- 5. Алтай жотасы -->
+    <div class="card">
+        <div class="info">
+            <h2>Алтай</h2>
+            <div class="lang-table">
+                <div class="lang-row"><span>🇰🇿 Qazaq</span> <strong>Altaı</strong></div>
+                <div class="lang-row"><span>🇷🇺 Russian</span> <strong>Алтай</strong></div>
+                <div class="lang-row"><span>🇬🇧 English</span> <strong>Altai Mountains</strong></div>
+            </div>
+            <div class="meaning-box">
+                <strong>Мағына:</strong> Түркі-моңғол тілдеріндегі "Алтын тау" ұғымынан шыққан. Халықаралық карталарда этимологиялық байланысы жиі ұмытылады.
+            </div>
+        </div>
+        <div id="m5" class="map-box"></div>
+    </div>
+
+</div>
+
+<script src="https://unpkg.com"></script>
+<script>
+    // Карталарды іске қосу
+    function createMap(id, loc, title) {
+        let m = L.map(id).setView(loc, 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+        L.marker(loc).addTo(m).bindPopup('<b>' + title + '</b>').openPopup();
+        // Карта өлшемін автоматты реттеу
+        setTimeout(() => { m.invalidateSize(); }, 800);
+    }
+
+    window.onload = () => {
+        createMap('m1', [43.05, 77.10], 'Іле Алатауы');
+        createMap('m2', [49.80, 86.58], 'Мұзтау');
+        createMap('m3', [42.21, 80.17], 'Хантәңірі');
+        createMap('m4', [47.16, 82.28], 'Тарбағатай');
+        createMap('m5', [49.00, 86.00], 'Алтай');
+
+        // Scroll Animation
+        const obs = new IntersectionObserver(entries => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.card').forEach(c => obs.observe(c));
+    };
+
+    // Транслитерация функциясы
+    function translit() {
+        const dict = {'а':'a','ә':'ä','б':'b','в':'v','г':'g','ғ':'ğ','д':'d','е':'e','ж':'j','з':'z','и':'i','й':'i','к':'k','қ':'q','л':'l','м':'m','н':'n','ң':'ñ','о':'o','ө':'ö','п':'p','р':'r','с':'s','т':'t','у':'u','ұ':'ū','ү':'ü','х':'x','һ':'h','ы':'y','і':'ı','ш':'ş','ч':'ç'};
+        let val = document.getElementById('inp').value.toLowerCase();
+        let res = val.split('').map(char => dict[char] || char).join('');
+        document.getElementById('res').innerText = res.charAt(0).toUpperCase() + res.slice(1);
+    }
+</script>
+
+</body>
+</html>

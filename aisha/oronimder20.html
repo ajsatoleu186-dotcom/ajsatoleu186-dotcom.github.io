@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <title>OronymKZ — Final Project</title>
+    
+    <!-- Карта жұмыс істеу үшін міндетті сілтемелер -->
+    <link rel="stylesheet" href="https://unpkg.com" />
+    <link href="https://googleapis.com" rel="stylesheet">
+    
+    <style>
+        :root { --p: #0984e3; --a: #6c5ce7; --bg: #f4f7f6; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); margin: 0; padding-bottom: 50px; }
+        
+        header {
+            background: linear-gradient(rgba(9,132,227,0.8), rgba(108,92,231,0.8)), #2c3e50;
+            height: 35vh; display: flex; align-items: center; justify-content: center; color: white; text-align: center;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+        }
+
+        .container { max-width: 1100px; margin: -50px auto 0; padding: 0 20px; }
+
+        /* ТРАНСЛИТЕРАТОР ОСЫ ЖЕРДЕ */
+        .translit-tool {
+            background: white; padding: 30px; border-radius: 25px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); text-align: center; margin-bottom: 50px;
+        }
+        .translit-tool input {
+            width: 80%; padding: 15px; border-radius: 30px; border: 2px solid var(--p);
+            font-size: 1.1rem; outline: none; margin-top: 10px;
+        }
+        #result { margin-top: 15px; font-size: 2rem; font-weight: 900; color: var(--a); min-height: 40px; }
+
+        /* Ороним блоктары */
+        .card {
+            background: white; border-radius: 30px; display: flex; margin-bottom: 40px;
+            overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.05); min-height: 550px;
+        }
+        .info { flex: 1; padding: 40px; }
+        .visual { flex: 1.2; display: flex; flex-direction: column; }
+        
+        /* СУРЕТ ЖӘНЕ КАРТА */
+        .photo-box { height: 280px; background-size: cover; background-position: center; background-color: #ccc; border-bottom: 4px solid var(--p); }
+        .map-box { flex: 1; min-height: 250px; background: #e5e5e5; z-index: 1; }
+
+        h2 { color: var(--p); font-size: 2.2rem; margin: 0 0 15px 0; }
+        .lang-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .warning { background: #fff9db; padding: 15px; border-radius: 15px; margin-top: 20px; border-left: 5px solid #fab005; font-size: 0.9rem; }
+
+        @media (max-width: 850px) { .card { flex-direction: column; } .map-box { height: 300px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1 style="margin:0; font-size: 3rem;">Oronym Qazaqstan</h1>
+        <p>Мағыналық өзгеріс және транслитерация</p>
+    </div>
+</header>
+
+<div class="container">
+    <!-- АВТОМАТТЫ ТРАНСЛИТЕРАТОР -->
+    <div class="translit-tool">
+        <h3 style="margin:0">⌨️ Интерактивті Транслитератор</h3>
+        <p style="color:#666">Атауды қазақша жазыңыз:</p>
+        <input type="text" id="userInput" placeholder="Мысалы: Хантәңірі" oninput="doTranslit()">
+        <div id="result">...</div>
+    </div>
+
+    <!-- 1. Іле Алатауы -->
+    <div class="card">
+        <div class="info">
+            <h2>Іле Алатауы</h2>
+            <div class="lang-item"><span>Qazaq:</span> <strong>İle Alatauy</strong></div>
+            <div class="lang-item"><span>Russian:</span> <strong>Заилийский Алатау</strong></div>
+            <div class="lang-item"><span>English:</span> <strong>Trans-Ili Alatau</strong></div>
+            <div class="warning"><strong>Мағына:</strong> Төл атауы - таудың Іле өзені бойындағы орналасуын білдіреді. "Заилийский" - отарлау кезеңінің атауы.</div>
+        </div>
+        <div class="visual">
+            <div class="photo-box" style="background-image: url('ile.jpg');"></div>
+            <div id="map1" class="map-box"></div>
+        </div>
+    </div>
+
+    <!-- 2. Мұзтау -->
+    <div class="card">
+        <div class="info">
+            <h2>Мұзтау</h2>
+            <div class="lang-item"><span>Qazaq:</span> <strong>Mūztau</strong></div>
+            <div class="lang-item"><span>Russian:</span> <strong>Белуха</strong></div>
+            <div class="lang-item"><span>English:</span> <strong>Mount Belukha</strong></div>
+            <div class="warning"><strong>Мағына:</strong> "Мұзтау" — киелі, мифологиялық атау. "Белуха" — тек физикалық түсін (ақ) сипаттайды.</div>
+        </div>
+        <div class="visual">
+            <div class="photo-box" style="background-image: url('muz.jpg');"></div>
+            <div id="map2" class="map-box"></div>
+        </div>
+    </div>
+
+    <!-- 3. Хантәңірі -->
+    <div class="card">
+        <div class="info">
+            <h2>Хантәңірі</h2>
+            <div class="lang-item"><span>Qazaq:</span> <strong>Xantəñırı</strong></div>
+            <div class="lang-item"><span>Russian:</span> <strong>Хан-Тенгри</strong></div>
+            <div class="lang-item"><span>English:</span> <strong>Khan Tengri</strong></div>
+            <div class="warning"><strong>Мағына:</strong> "Тәңір" — Аспан Иесі дегенді білдіреді. Аудармада бұл терең мән жиі жоғалып кетеді.</div>
+        </div>
+        <div class="visual">
+            <div class="photo-box" style="background-image: url('khan.jpg');"></div>
+            <div id="map3" class="map-box"></div>
+        </div>
+    </div>
+</div>
+
+<!-- КАРТА ЖӘНЕ ТРАНСЛИТ СКРИПТТЕРІ -->
+<script src="https://unpkg.com"></script>
+<script>
+    // ТРАНСЛИТЕРАЦИЯ ЛОГИКАСЫ
+    function doTranslit() {
+        const map = {'а':'a','ә':'ä','б':'b','в':'v','г':'g','ғ':'ğ','д':'d','е':'e','ж':'j','з':'z','и':'i','й':'i','к':'k','қ':'q','л':'l','м':'m','н':'n','ң':'ñ','о':'o','ө':'ö','п':'p','р':'r','с':'s','т':'t','у':'u','ұ':'ū','ү':'ü','х':'x','ы':'y','і':'ı','ш':'ş'};
+        let text = document.getElementById('userInput').value.toLowerCase();
+        let out = text.split('').map(char => map[char] || char).join('');
+        document.getElementById('result').innerText = out.charAt(0).toUpperCase() + out.slice(1);
+    }
+
+    // КАРТАНЫ ІСКЕ ҚОСУ
+    function startMap(id, loc, title) {
+        // Контейнердің бар екенін тексеру
+        let container = document.getElementById(id);
+        if(!container) return;
+
+        let m = L.map(id).setView(loc, 9);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+        L.marker(loc).addTo(m).bindPopup(title).openPopup();
+        
+        // Карта өлшемін түзеу (міндетті түрде!)
+        setTimeout(() => { m.invalidateSize(); }, 500);
+    }
+
+    window.onload = () => {
+        startMap('map1', [43.05, 77.10], 'Іле Алатауы');
+        startMap('map2', [49.80, 86.58], 'Мұзтау');
+        startMap('map3', [42.21, 80.17], 'Хантәңірі');
+    };
+</script>
+
+</body>
+</html>

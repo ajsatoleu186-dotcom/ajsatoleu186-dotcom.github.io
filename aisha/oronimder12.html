@@ -1,0 +1,252 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Қазақ оронимдері</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: black;
+    color: white;
+}
+
+/* HEADER */
+header {
+    text-align: center;
+    padding: 60px;
+    background: url('altai.jpg') center/cover;
+}
+
+header h1 {
+    font-size: 45px;
+    background: rgba(0,0,0,0.6);
+    display: inline-block;
+    padding: 10px 20px;
+}
+
+/* GRID */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap: 20px;
+    padding: 40px;
+}
+
+/* CARD */
+.card {
+    height: 300px;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* IMAGE */
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* OVERLAY */
+.overlay {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    width: 100%;
+    padding: 15px;
+    transition: 0.3s;
+}
+
+.card:hover .overlay {
+    background: rgba(0,0,0,0.9);
+}
+
+/* TEXT */
+.overlay h2 {
+    margin: 0;
+}
+
+.overlay p {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* FOOTER */
+footer {
+    text-align: center;
+    padding: 20px;
+    opacity: 0.6;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Қазақ оронимдері</h1>
+</header>
+
+<section class="container">
+
+<div class="card">
+<img src="altai.jpg">
+<div class="overlay">
+<h2>Алтай</h2>
+<p>KZ: Алтай | RU: Алтай | EN: Altai</p>
+<p>Мағынасы: "алтын тау"</p>
+</div>
+</div>
+
+<div class="card">
+<img src="tien.jpg">
+<div class="overlay">
+<h2>Тянь-Шань</h2>
+<p>KZ: Тянь-Шань | RU: Тянь-Шань | EN: Tian Shan</p>
+<p>Мағынасы: "аспан таулары"</p>
+</div>
+</div>
+
+<div class="card">
+<img src="ile.jpg">
+<div class="overlay">
+<h2>Іле Алатауы</h2>
+<p>KZ: Іле | RU: Иле | EN: Ile</p>
+<p>Өзен атымен байланысты</p>
+</div>
+</div>
+
+<div class="card">
+<img src="zhungar.jpg">
+<div class="overlay">
+<h2>Жоңғар Алатауы</h2>
+<p>KZ: Жоңғар | RU: Джунгар | EN: Zhungar</p>
+<p>Тарихи атау</p>
+</div>
+</div>
+
+<div class="card">
+<img src="saryarka.jpg">
+<div class="overlay">
+<h2>Сарыарқа</h2>
+<p>KZ: Сарыарқа | RU: Сарыарка | EN: Saryarka</p>
+<p>"сары жон"</p>
+</div>
+</div>
+
+<div class="card">
+<img src="ulytau.jpg">
+<div class="overlay">
+<h2>Ұлытау</h2>
+<p>KZ: Ұлытау | RU: Улытау | EN: Ulytau</p>
+<p>қасиетті тау</p>
+</div>
+</div>
+
+<div class="card">
+<img src="mugalzhar.jpg">
+<div class="overlay">
+<h2>Мұғалжар</h2>
+<p>KZ: Мұғалжар | RU: Мугалжар | EN: Mughalzhar</p>
+<p>тау жотасы</p>
+</div>
+</div>
+
+<div class="card">
+<img src="mangystau.jpg">
+<div class="overlay">
+<h2>Маңғыстау</h2>
+<p>KZ: Маңғыстау | RU: Мангистау | EN: Mangystau</p>
+<p>1000 қыстау</p>
+</div>
+</div>
+
+<div class="card">
+<img src="karatau.jpg">
+<div class="overlay">
+<h2>Қаратау</h2>
+<p>KZ: Қаратау | RU: Каратау | EN: Karatau</p>
+<p>қара тау</p>
+</div>
+</div>
+
+<div class="card">
+<img src="ketpen.jpg">
+<div class="overlay">
+<h2>Кетпен</h2>
+<p>KZ: Кетпен | RU: Кетпен | EN: Ketpen</p>
+<p>тау жотасы</p>
+</div>
+</div>
+
+<div class="card">
+<img src="kungey.jpg">
+<div class="overlay">
+<h2>Күнгей Алатауы</h2>
+<p>KZ: Күнгей | RU: Кунгей | EN: Kungey</p>
+<p>күн түсетін беткей</p>
+</div>
+</div>
+
+<div class="card">
+<img src="kokshetau.jpg">
+<div class="overlay">
+<h2>Көкшетау</h2>
+<p>KZ: Көкшетау | RU: Кокшетау | EN: Kokshetau</p>
+<p>көк тау</p>
+</div>
+</div>
+
+<div class="card">
+<img src="bayan.jpg">
+<div class="overlay">
+<h2>Баянауыл</h2>
+<p>KZ: Баянауыл | RU: Баянаул | EN: Bayan</p>
+<p>қасиетті жер</p>
+</div>
+</div>
+
+<div class="card">
+<img src="karkaraly.jpg">
+<div class="overlay">
+<h2>Қарқаралы</h2>
+<p>KZ: Қарқаралы | RU: Каркаралы | EN: Karkaraly</p>
+<p>бас киім атауы</p>
+</div>
+</div>
+
+<div class="card">
+<img src="kent.jpg">
+<div class="overlay">
+<h2>Кент</h2>
+<p>KZ: Кент | RU: Кент | EN: Kent</p>
+<p>ежелгі қала атауы</p>
+</div>
+</div>
+
+<div class="card">
+<img src="shyngystau.jpg">
+<div class="overlay">
+<h2>Шыңғыстау</h2>
+<p>KZ: Шыңғыстау | RU: Чингистау | EN: Shyngystau</p>
+<p>Шыңғыс ханмен байланысты</p>
+</div>
+</div>
+
+</section>
+
+<footer>
+2026 | Жоба
+</footer>
+
+</body>
+</html>

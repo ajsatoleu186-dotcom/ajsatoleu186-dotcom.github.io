@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OronymKZ — Төл атаулар мен транслитерация</title>
+    <style>
+        :root { --danger: #e74c3c; --success: #27ae60; --dark: #2c3e50; --bg: #f8f9fa; --accent: #2980b9; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; color: #333; }
+        
+        header { background: linear-gradient(135deg, var(--dark), var(--accent)); color: white; padding: 60px 20px; text-align: center; }
+        .container { max-width: 950px; margin: -40px auto 50px; padding: 0 20px; }
+        
+        .search-area { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); margin-bottom: 30px; }
+        input { width: 100%; padding: 18px; border: 2px solid #eee; border-radius: 12px; font-size: 1.1rem; outline: none; box-sizing: border-box; transition: 0.3s; }
+        input:focus { border-color: var(--accent); }
+
+        .card { background: white; border-radius: 25px; margin-bottom: 40px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #eee; }
+        
+        /* Сурет бөлімі */
+        .card-img { width: 100%; height: 350px; background-size: cover; background-position: center; position: relative; }
+        .img-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 20px; color: white; }
+
+        .comparison { display: flex; border-bottom: 1px solid #eee; }
+        .side { flex: 1; padding: 20px; text-align: center; }
+        .old { background: #fff5f5; color: var(--danger); border-right: 1px solid #eee; }
+        .new { background: #f5fff8; color: var(--success); }
+        .label { font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; }
+        .name { font-size: 1.5rem; font-weight: 800; }
+
+        .details { padding: 30px; }
+        .lang-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .lang-card { background: #f1f4f7; padding: 15px; border-radius: 12px; }
+        .lang-card b { color: var(--dark); display: block; font-size: 0.8rem; margin-bottom: 5px; }
+        .lang-card span { font-size: 1.1rem; font-weight: 600; color: var(--accent); }
+
+        .history-box { background: #fffdf0; padding: 20px; border-radius: 15px; border-left: 6px solid #f1c40f; line-height: 1.6; }
+        .history-box h4 { margin: 0 0 10px 0; color: #997404; display: flex; align-items: center; gap: 8px; }
+
+        @media (max-width: 600px) { .lang-grid { grid-template-columns: 1fr; } .card-img { height: 200px; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Qazaq Oronym Registry</h1>
+    <p>Оронимдердің транслитерациясы және мағыналық өзгерістері</p>
+</header>
+
+<div class="container">
+    <div class="search-area">
+        <input type="text" id="search" placeholder="Тау немесе жота атауын іздеңіз..." oninput="render()">
+    </div>
+    <div id="list"></div>
+</div>
+
+<script>
+    const oronyms = [
+        {
+            old: "Заилийский Алатау",
+            new: "Іле Алатауы",
+            lat: "İle Alatauy",
+            eng: "Trans-Ili Alatau",
+            img: "ile.jpg",
+            history: "Отарлау кезеңінде Верный (Алматы) бекінісінен қарағанда 'Іленің арғы жағындағы тау' деп аталып кеткен. Төл мағынасы — Іле өзені бойындағы асқар таулар тізбегі.",
+            location: "Алматы облысы"
+        },
+        {
+            old: "Белуха",
+            new: "Мұзтау",
+            lat: "Mūztau",
+            eng: "Mount Muztau (Belukha)",
+            img: "muz.jpg",
+            history: "Орысша 'Белуха' атауы таудың ақ қармен жабулы болуына байланысты берілген. Алайда, ежелгі түркілік атауы — Мұзтау. Бұл нысан Алтайдың ең биік, киелі нүктесі саналады.",
+            location: "Шығыс Қазақстан"
+        },
+        {
+            old: "Кокчетав",
+            new: "Көкшетау",
+            lat: "Kökşetau",
+            eng: "Kokshetau",
+            img: "kokshetau.jpg",
+            history: "'Кокчетав' — қазақша 'Көкше' және 'Тау' сөздерінің орыс тілінің айтылу заңдылығына икемделген бұрмаланған нұсқасы. Латынша 'Kökşetau' жазылуы түпнұсқа дыбысталуын сақтайды.",
+            location: "Ақмола облысы"
+        },
+        {
+            old: "Боровое",
+            new: "Бурабай",
+            lat: "Burabai",
+            eng: "Burabay",
+            img: "bura.jpg",
+            history: "'Боровое' атауы қарағайлы орман (бор) дегенді білдіреді. Төл атауы — Бурабай. Аңыз бойынша, ел басына күн туғанда жартасқа айналып кеткен киелі Бура туралы ұғыммен байланысты.",
+            location: "Ақмола облысы"
+        }
+    ];
+
+    function render() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const list = document.getElementById('list');
+        list.innerHTML = "";
+
+        const filtered = oronyms.filter(item => 
+            item.new.toLowerCase().includes(query) || 
+            item.old.toLowerCase().includes(query)
+        );
+
+        filtered.forEach(obj => {
+            list.innerHTML += `
+                <div class="card">
+                    <div class="card-img" style="background-image: url('${obj.img}')">
+                        <div class="img-overlay">
+                            <span>📍 ${obj.location}</span>
+                        </div>
+                    </div>
+                    <div class="comparison">
+                        <div class="side old">
+                            <span class="label">Бұрмаланған атау</span>
+                            <div class="name">${obj.old}</div>
+                        </div>
+                        <div class="side new">
+                            <span class="label">Төл ғылыми атау</span>
+                            <div class="name">${obj.new}</div>
+                        </div>
+                    </div>
+                    <div class="details">
+                        <div class="lang-grid">
+                            <div class="lang-card"><b>English (International)</b><span>${obj.eng}</span></div>
+                            <div class="lang-card"><b>Qazaq (Latin script)</b><span>${obj.lat}</span></div>
+                        </div>
+                        <div class="history-box">
+                            <h4>📜 Мағыналық және тарихи негіздеме:</h4>
+                            <p>${obj.history}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    render();
+</script>
+
+</body>
+</html>
