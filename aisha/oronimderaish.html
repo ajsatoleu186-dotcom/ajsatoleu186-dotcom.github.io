@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORONYM PRESTIGE | Digital Archive</title>
+    <script src="https://tailwindcss.com"></script>
+    <link href="https://cloudflare.com" rel="stylesheet">
+    <style>
+        @import url('https://googleapis.com');
+        
+        :root {
+            --glass: rgba(255, 255, 255, 0.7);
+            --accent: #3b82f6;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f0f4f8;
+            background-image: radial-gradient(at 0% 0%, hsla(210,100%,90%,1) 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, hsla(220,100%,90%,1) 0, transparent 50%);
+            min-height: 100vh;
+            color: #1a202c;
+        }
+
+        .premium-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .search-container input {
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border-radius: 30px;
+            transition: 0.4s;
+        }
+
+        .search-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1);
+        }
+
+        .lang-badge {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            border: 1px solid #edf2f7;
+        }
+
+        .image-reveal {
+            clip-path: inset(0 0 0 0 rounded 35px);
+            transition: 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .floating { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="py-10 px-4">
+
+    <!-- Premium Nav -->
+    <nav class="max-w-6xl mx-auto mb-16 flex justify-between items-center bg-white/40 backdrop-blur-md p-6 rounded-full border border-white/50 shadow-sm">
+        <div class="text-2xl font-extrabold tracking-tighter gradient-text">ORONYM<span class="font-light">.PRO</span></div>
+        <div class="flex space-x-8 text-xs font-bold uppercase tracking-widest text-slate-500">
+            <span class="hover:text-blue-600 cursor-pointer transition">Archive</span>
+            <span class="hover:text-blue-600 cursor-pointer transition">Scientific</span>
+            <span class="bg-blue-600 text-white px-4 py-2 rounded-full">Explore</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h1 class="text-6xl md:text-8xl font-black mb-6 tracking-tighter gradient-text">Digital Map.</h1>
+            <div class="search-container max-w-2xl mx-auto relative group">
+                <input type="text" id="mainSearch" placeholder="Тау атауын енгізіңіз..." 
+                    class="search-input w-full p-8 text-2xl font-medium outline-none border-2 border-transparent focus:border-blue-200">
+                <div class="absolute right-6 top-7 text-blue-500 opacity-30 group-hover:opacity-100 transition">
+                    <i class="fas fa-mountain-sun text-3xl"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Visualizer -->
+        <div id="displayArea" class="hidden opacity-0 translate-y-10 transition-all duration-1000">
+            <div class="premium-card p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                
+                <div class="space-y-10">
+                    <!-- Title in 4 Languages -->
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <span class="h-1 w-12 bg-blue-600 rounded-full"></span>
+                            <span class="text-blue-600 font-black uppercase text-sm tracking-widest">Multi-language Titles</span>
+                        </div>
+                        <h2 id="titleKz" class="text-6xl font-black text-slate-900 leading-none"></h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="lang-badge font-semibold text-slate-500">RU: <span id="titleRu" class="text-slate-900"></span></div>
+                            <div class="lang-badge font-semibold text-slate-500">EN: <span id="titleEn" class="text-slate-900"></span></div>
+                            <div class="lang-badge font-semibold text-slate-500 col-span-full">ZH: <span id="titleZh" class="text-slate-900"></span></div>
+                        </div>
+                    </div>
+
+                    <!-- Description in 4 Languages -->
+                    <div class="space-y-6 pt-6 border-t border-slate-200/50">
+                        <div class="grid grid-cols-1 gap-6">
+                            <p id="descKz" class="text-xl text-slate-700 leading-relaxed font-medium"></p>
+                            <p id="descRu" class="text-gray-500 italic leading-relaxed"></p>
+                            <p id="descEn" class="text-gray-500 leading-relaxed"></p>
+                            <p id="descZh" class="text-gray-400 leading-relaxed"></p>
+                        </div>
+                    </div>
+
+                    <!-- Action -->
+                    <div class="pt-8">
+                        <a id="resMap" href="#" target="_blank" class="inline-block bg-slate-900 text-white px-12 py-5 rounded-full text-lg font-bold shadow-2xl hover:bg-blue-600 hover:-translate-y-1 transition duration-400">
+                            <i class="fas fa-location-dot mr-3"></i> Open in Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Visual -->
+                <div class="relative group">
+                    <div class="absolute -inset-4 bg-gradient-to-tr from-blue-500 to-emerald-400 rounded-[50px] opacity-20 blur-2xl group-hover:opacity-40 transition duration-1000"></div>
+                    <div class="image-reveal relative h-[600px] shadow-inner overflow-hidden border-[12px] border-white">
+                        <img id="resImg" src="" alt="" class="w-full h-full object-cover transform transition duration-1000 group-hover:scale-110">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const database = {
+            "хан тәңірі": {
+                titles: { kz: "Хан Тәңірі", ru: "Хан-Тенгри", en: "Khan Tengri", zh: "汗腾格里峰" },
+                kz: "Тәңіршілдік нанымындағы ең биік киелі орын. Мағынасы 'Көк әміршісі'. Биіктігі — 7010 метр.",
+                ru: "Пирамидальный пик, высочайшая точка Тянь-Шаня. Переводится как 'Повелитель неба'.",
+                en: "A marble pyramid peak and the highest point of the Tian Shan. Means 'Lord of the Sky'.",
+                zh: "大理石金字塔山峰，天山山脉最高点。哈萨克语意为'上苍之王'。",
+                img: "khan.jpg",
+                map: "https://google.com"
+            },
+            "мұзтау": {
+                titles: { kz: "Мұзтау", ru: "Белуха", en: "Belukha", zh: "别卢哈山" },
+                kz: "Алтай тауларының ең биік шыңы. Ақ қарлы, мұзды болғандықтан 'Мұзтау' деп аталады.",
+                ru: "Священная гора Алтая. Название дано из-за обильного снежного покрова и ледников.",
+                en: "The highest mountain in Altai. The name refers to the eternal ice and white snow covering it.",
+                zh: "阿尔泰山脉的最高峰。名字源于覆盖山顶的永恒冰雪。",
+                img: "muz.jpg",
+                map: "https://google.com"
+            },
+            "тянь-шань": {
+                titles: { kz: "Тянь-Шань", ru: "Тянь-Шань", en: "Tian Shan", zh: "天山" },
+                kz: "Орталық Азиядағы ең ірі тау жүйелерінің бірі. Көне түркі тілінен 'Аспан таулары'.",
+                ru: "Одна из крупнейших горных систем мира. Название переводится как 'Небесные горы'.",
+                en: "A massive mountain system. The name means 'Celestial Mountains' in Chinese.",
+                zh: "世界最大的山系之一。名字意为'上苍之山'。",
+                img: "tien.jpg",
+                map: "https://google.com"
+            },
+            "маңғыстау": {
+                titles: { kz: "Маңғыстау", ru: "Мангистау", en: "Mangystau", zh: "曼吉斯套" },
+                kz: "Батыс Қазақстандағы ерекше таулы өлке. Атауы 'Мың қыстау' сөзінен шыққан.",
+                ru: "Уникальный горный массив у Каспийского моря. Название означает 'Тысяча зимовок'.",
+                en: "Ancient mountain region near the Caspian. Name translates to 'A thousand wintering places'.",
+                zh: "里海附近的古老山区。名字的意思通常被解释为'一千个冬营地'。",
+                img: "magystau.jpg",
+                map: "https://google.com"
+            },
+            "жоңғар алатауы": {
+                titles: { kz: "Жоңғар Алатауы", ru: "Джунгарский Алатау", en: "Dzungarian Alatau", zh: "准噶尔阿拉套山" },
+                kz: "Қазақстан мен Қытай шекарасындағы жота. Шұбар, түрлі-түсті таулар дегенді білдіреді.",
+                ru: "Величественная горная цепь. Название 'Алатау' означает пестрые, разноцветные горы.",
+                en: "Mountain range on the border with China. The name means 'mottled' or 'colorful' mountains.",
+                zh: "中哈边境的山脉。'阿拉套'在突厥语中意为'五彩斑斓的山'。",
+                img: "zhungar.jpg",
+                map: "https://google.com"
+            },
+            "алтай": {
+                titles: { kz: "Алтай", ru: "Алтай", en: "Altai", zh: "阿尔泰" },
+                kz: "Түркі халықтарының атажұрты. Ежелгі түркі тілінен 'Алтын' мағынасын білдіреді.",
+                ru: "Золотые горы, прародина тюркских народов. Включены в список наследия ЮНЕСКО.",
+                en: "The Golden Mountains. It is the ancestral homeland of all Turkic peoples.",
+                zh: "黄金之山，突厥民族的摇篮。被列为世界自然遗产。",
+                img: "altay.jpg",
+                map: "https://google.com"
+            },
+            "бурабай": {
+                titles: { kz: "Бурабай", ru: "Боровое", en: "Burabay", zh: "布拉拜" },
+                kz: "Көкшетау өлкесіндегі киелі мекен. Аңыз бойынша киелі Бура есімімен аталған.",
+                ru: "Курортная жемчужина Казахстана. Название связано с легендой о священном белом верблюде.",
+                en: "A legendary oasis in Central Kazakhstan. Named after a mythical sacred camel named Bura.",
+                zh: "哈萨克斯坦的一颗明珠。得名于一只名叫'布拉'的神圣骆驼的传说。",
+                img: "bura.jpg",
+                map: "https://google.com"
+            }
+        };
+
+        const input = document.getElementById('mainSearch');
+        const area = document.getElementById('displayArea');
+
+        input.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (database[query]) {
+                const data = database[query];
+                document.getElementById('titleKz').innerText = data.titles.kz;
+                document.getElementById('titleRu').innerText = data.titles.ru;
+                document.getElementById('titleEn').innerText = data.titles.en;
+                document.getElementById('titleZh').innerText = data.titles.zh;
+                document.getElementById('descKz').innerText = data.kz;
+                document.getElementById('descRu').innerText = data.ru;
+                document.getElementById('descEn').innerText = data.en;
+                document.getElementById('descZh').innerText = data.zh;
+                document.getElementById('resImg').src = data.img;
+                document.getElementById('resMap').href = data.map;
+                
+                area.classList.remove('hidden');
+                setTimeout(() => {
+                    area.style.opacity = "1";
+                    area.style.transform = "translateY(0)";
+                }, 10);
+            } else {
+                area.style.opacity = "0";
+                area.style.transform = "translateY(10px)";
+                setTimeout(() => area.classList.add('hidden'), 500);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+const mountains = [
+            {
+                names: { kz: "Хан Тәңірі", ru: "Хан-Тенгри", en: "Khan Tengri", zh: "汗腾格里峰" },
+                etym: {
+                    kz: "Ежелгі түркі тілінен 'Көк әміршісі'. <br><a href='https://ru.wikipedia.org/wiki/%D0%A5%D0%B0%D0%BD-%D0%A2%D0%B5%D0%BD%D0%B3%D1%80%D0%B8' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Название происходит от древнетюркского 'Властелин неба'.",
+                    en: "Derived from ancient Turkic 'Lord of the Sky'.",
+                    zh: "源于古突厥语“天之主”。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°12'34.84\"N+80°10'30.12\"E"
+            },
+            {
+                names: { kz: "Мұзтау (Белуха)", ru: "Белуха", en: "Belukha", zh: "别卢哈山" },
+                etym: {
+                    kz: "Төл атауы — Мұзтау. <br><a href='https://wikipedia.org' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Высшая точка Алтайских гор.",
+                    en: "The highest peak of Altai Mountains.",
+                    zh: "阿尔泰山的最高峰。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°48'27.93\"N+86°35'24.28\"E"
+            },
+            {
+                names: { kz: "Іле Алатауы", ru: "Заилийский Алатау", en: "Trans-Ili Alatau", zh: "外伊犁阿拉套" },
+                etym: {
+                    kz: "Солтүстік Тянь-Шаньдағы тау жотасы. <br><a href='https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B8%D0%BB%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B9_%D0%90%D0%BB%D0%B0%D1%82%D0%B0%D1%83' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Горный хребет в северном Тянь-Шане.",
+                    en: "Mountain range in the northern Tien Shan.",
+                    zh: "天山北脉。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°03'24.31\"N+77°14'31.28\"E"
+            },
+            {
+                names: { kz: "Маңғыстау", ru: "Мангистау", en: "Mangystau", zh: "曼格斯套" },
+                etym: {
+                    kz: "Каспий маңындағы таулы аймақ. <br><a href='https://ru.wikipedia.org/wiki/%D0%9C%D0%B0%D0%BD%D0%B3%D0%B8%D1%81%D1%82%D0%B0%D1%83' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Горный массив на полуострове Мангышлак.",
+                    en: "Mountain region near the Caspian Sea.",
+                    zh: "里海附近的山区。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°42'07.86\"N+51°15'46.95\"E"
+            },
+            {
+                names: { kz: "Алтай", ru: "Алтайские горы", en: "Altai Mountains", zh: "阿尔泰山脉" },
+                etym: {
+                    kz: "Орталық Азиядағы тау жүйесі. <br><a href='https://ru.wikipedia.org/wiki/%D0%90%D0%BB%D1%82%D0%B0%D0%B9%D1%81%D0%BA%D0%B8%D0%B5_%D0%B3%D0%BE%D1%80%D1%8B' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Горная система в Центральной Азии.",
+                    en: "Mountain system in Central Asia.",
+                    zh: "中亚山系。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°00'00.99\"N+89°00'01.03\"E"
+            },
+            {
+                names: { kz: "Жетісу Алатауы", ru: "Джунгарский Алатау", en: "Dzungarian Alatau", zh: "准格尔阿拉套" },
+                etym: {
+                    kz: "Қазақстан мен Қытай шекарасындағы тау. <br><a href='https://ru.wikipedia.org/wiki/%D0%94%D0%B6%D1%83%D0%BD%D0%B3%D0%B0%D1%80%D1%81%D0%BA%D0%B8%D0%B9_%D0%90%D0%BB%D0%B0%D1%82%D0%B0%D1%83' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Горная цепь на границе Казахстана и Китая.",
+                    en: "Mountain range on the border of Kazakhstan and China.",
+                    zh: "哈中边界的山脉。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°00'01.92\"N+80°00'02.73\"E"
+            },
+            {
+                names: { kz: "Қарқаралы", ru: "Каркаралинск", en: "Karkaraly", zh: "卡尔卡拉雷" },
+                etym: {
+                    kz: "Сарыарқаның інжу-маржаны. <br>Координаттары: 49°18'04.07\"N 75°25'47.62\"E",
+                    ru: "Оазис среди казахских степей.",
+                    en: "An oasis in the Kazakh Steppe.",
+                    zh: "哈萨克草原中的绿洲。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°18'04.07\"N+75°25'47.62\"E"
+            },
+            {
+                names: { kz: "Тарбағатай", ru: "Тарбагатай", en: "Tarbagatai", zh: "塔尔巴哈台山" },
+                etym: {
+                    kz: "Моңғол тілінен 'суырлы тау'. <br><a href='https://ru.wikipedia.org/wiki/%D0%A2%D0%B0%D1%80%D0%B1%D0%B0%D0%B3%D0%B0%D1%82%D0%B0%D0%B9_(%D0%B3%D0%BE%D1%80%D1%8B)' target='_blank' class='text-blue-500 underline'>Википедия</a>",
+                    ru: "Горный хребет в Казахстане и Китае.",
+                    en: "Mountain range in Kazakhstan and China.",
+                    zh: "哈中边界的山脉。"
+                },
+                img: "https://unsplash.com", 
+                map: "https://google.com°11'18.17\"N+82°28'00.04\"E"
+            }
+        ];

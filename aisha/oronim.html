@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORONYM PRO | Ғылыми-цифрлық архив</title>
+    <script src="https://tailwindcss.com"></script>
+    <link href="https://cloudflare.com" rel="stylesheet">
+    <style>
+        @import url('https://googleapis.com');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f1f5f9; color: #0f172a; scroll-behavior: smooth; }
+        .hero-section { background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%); }
+        .glass-card { background: white; border-radius: 2.5rem; border: 1px solid #e2e8f0; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.05); transition: 0.4s; }
+        .glass-card:hover { transform: translateY(-10px); box-shadow: 0 40px 60px -15px rgba(59, 130, 246, 0.2); }
+        .mountain-img { height: 400px; width: 100%; object-fit: cover; border-radius: 2rem 2rem 0 0; }
+        .big-input { width: 100%; padding: 1.5rem; font-size: 1.5rem; border-radius: 1.25rem; border: 2px solid #e2e8f0; outline: none; }
+        .etymology-box { background: #f8fafc; border-left: 5px solid #3b82f6; padding: 20px; border-radius: 0 15px 15px 0; }
+        .badge-lang { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; background: #e0f2fe; color: #0369a1; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Header -->
+    <header class="hero-section pt-24 pb-40 px-6 text-center text-white">
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-6">ORONYM<span class="text-blue-200">.PROJECT</span></h1>
+        <p class="text-xl md:text-2xl opacity-90 max-w-3xl mx-auto font-light leading-relaxed">
+            Қазақстан оронимдерінің транслитерациялық жүйесі және мағыналық ерекшеліктерінің цифрлық картасы
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 -mt-24">
+        
+        <!-- Инструменты -->
+        <div class="grid grid-cols-1 gap-8 mb-20">
+            <div class="glass-card p-10">
+                <h2 class="text-2xl font-black mb-6 flex items-center gap-3">
+                    <i class="fas fa-sync-alt text-blue-500"></i> Транслитератор (KZ -> QAZ)
+                </h2>
+                <input type="text" id="transInput" placeholder="Мәтінді жазыңыз..." class="big-input mb-6 shadow-inner">
+                <div class="bg-slate-900 p-10 rounded-3xl text-center">
+                    <span class="text-blue-400 text-xs font-bold uppercase tracking-widest block mb-2">Цифрлық транскрипция:</span>
+                    <p id="transResult" class="text-4xl md:text-5xl font-black text-white break-all tracking-tight">---</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10 Ороним Каталогы -->
+        <div id="catalogGrid" class="space-y-16">
+            <!-- Сюда JS вставит 10 мощных объектов -->
+        </div>
+    </main>
+
+    <script>
+        const latynMap = {
+            'а':'a', 'ә':'ä', 'б':'b', 'в':'v', 'г':'g', 'ғ':'ğ', 'д':'d', 'е':'e', 'ё':'yo', 'ж':'j', 'з':'z', 'и':'i', 'й':'i', 'к':'k', 'қ':'q', 'л':'l', 'м':'m', 'н':'n', 'ң':'ñ', 'о':'o', 'ө':'ö', 'п':'p', 'р':'r', 'с':'s', 'т':'t', 'у':'u', 'ұ':'ū', 'ү':'ü', 'ф':'f', 'х':'h', 'һ':'h', 'ц':'ts', 'ч':'ch', 'ш':'ş', 'щ':'şş', 'ъ':'', 'ы':'y', 'і':'i', 'ь':'', 'э':'e', 'ю':'yu', 'я':'ya',
+            'А':'A', 'Ә':'Ä', 'Б':'B', 'В':'V', 'Г':'G', 'Ғ':'Ğ', 'Д':'D', 'Е':'E', 'Ж':'J', 'З':'Z', 'И':'I', 'Й':'I', 'К':'K', 'Қ':'Q', 'Л':'L', 'М':'M', 'Н':'N', 'Ң':'Ñ', 'О':'O', 'Ө':'Ö', 'П':'P', 'Р':'R', 'С':'S', 'Т':'T', 'У':'U', 'Ұ':'Ū', 'Ү':'Ü', 'Ф':'F', 'Х':'H', 'Һ':'H', 'Ш':'Ş', 'Ы':'Y', 'І':'I'
+        };
+
+        document.getElementById('transInput').addEventListener('input', (e) => {
+            document.getElementById('transResult').innerText = e.target.value.split('').map(c => latynMap[c] || c).join('') || "---";
+        });
+
+        const mountains = [
+            {
+                names: { kz: "Хан Тәңірі", ru: "Хан-Тенгри", en: "Khan Tengri", zh: "汗腾格里峰" },
+                etym: {
+                    kz: "Ежелгі түркі тілінен 'Көк әміршісі'. Тәңіршілдік кезеңінде тауды құдай ретінде қабылдаудан туған. Орыс тілінде 'Хан-Тенгри' түрінде транслитерацияланған, бірақ түпкі мағынасы 'Тәңір хан' екені ескерілмейді.",
+                    ru: "Название происходит от древнетюркского 'Властелин неба'. В русском языке закрепилась форма 'Хан-Тенгри', что частично искажает иерархию имен в казахском языке.",
+                    en: "Derived from ancient Turkic 'Lord of the Sky'. Often transliterated directly, losing the deep religious meaning of Tengrism.",
+                    zh: "源于古突厥语“天之主”。在国际地图上常被音译，但其原始的宗教文化含义往往被忽略。"
+                },
+                img: "khan.jpg", map: "https://google.com"
+            },
+            {
+                names: { kz: "Мұзтау", ru: "Белуха", en: "Belukha Mountain", zh: "别卢哈山" },
+                etym: {
+                    kz: "Төл атауы — Мұзтау. Орыс тіліне 'Белуха' (белый - ақ) болып аударылған. Бұл жерде физикалық сипаттама (ақ түс) сақталғанымен, таудың 'мұзды' табиғаты аудармада жоғалған.",
+                    ru: "Казахское название — Мұзтау. Русское 'Белуха' передает цвет снега, но теряет корень 'Муз' (лед), характерный для Алтайской топонимики.",
+                    en: "Locally known as Muztau (Ice Mountain). The English/Russian 'Belukha' (White One) shifts the focus from ice to color.",
+                    zh: "当地称为 Muztau（冰山）。在翻译过程中，重点从“冰”转移到了“白色”。"
+                },
+                img: "muz.jpg", map: "https://google.com"
+            },
+            {
+                names: { kz: "Іле Алатауы", ru: "Заилийский Алатау", en: "Trans-Ili Alatau", zh: "外伊犁阿拉套" },
+                etym: {
+                    kz: "Аудармадағы ең үлкен бұрмаланудың бірі. 'Заилийский' (Іленің арғы жағы) — бұл отарлау кезеңіндегі Верный (Алматы) қаласына қатысты бағыт. Төл атауы — Іле Алатауы.",
+                    ru: "Название 'Заилийский' отражает взгляд со стороны города Верный. Исконное имя 'Іле Алатауы' указывает на связь с рекой Или.",
+                    en: "The term 'Trans-Ili' is a colonial geographic perspective. The authentic name refers to the mountain range's location along the Ili River.",
+                    zh: "“外伊犁”是一个殖民时期的地理视角。真实名称是指伊犁河畔的山脉。"
+                },
+                img: "tien.jpg", map: "https://google.com"
+            },
+            {
+                names: { kz: "Маңғыстау", ru: "Мангистау", en: "Mangystau", zh: "曼吉斯套" },
+                etym: {
+                    kz: "Этимологиясы 'Мың қыстау' сөзінен шыққан. Орыс тілді карталарда ұзақ уақыт 'Мангышлак' болып жазылып келді, бұл атаудың тарихи негізін бұрмалайды.",
+                    ru: "От 'Мың қыстау' (тысяча зимовок). Старое название 'Мангышлак' является искаженной формой, не передающей суть региона.",
+                    en: "Literally 'A Thousand Winterings'. Former 'Mangyshlak' is a distorted transliteration from the Soviet era.",
+                    zh: "字面意思是“一千个冬营地”。旧称“曼格什拉克”是苏联时期扭曲的音译。"
+                },
+                img: "magystau.jpg", map: "https://google.com"
+
+             },
+            {
+                names: { kz: "Алтай", ru: "Алтай", en: "Altai", zh: "阿尔泰" },
+                etym: {
+                    kz: "Ежелгі түркі тіліндегі 'Алтын' сөзінен. Халықаралық деңгейде атауы сақталғанымен, этимологиялық байланысы (алтын кендері) сипаттамаларда жиі ұмытылады.",
+                    ru: "Происходит от тюркского 'Алтын' (Золото). Один из немногих оронимов, сохранивших форму во всех языках.",
+                    en: "Derived from Turkic 'Altyn' (Gold). Globally recognized, yet its golden history is often omitted in brief maps.",
+                    zh: "源于突厥语“Altyn”（金）。尽管在全球范围内被认可，但其“金山”的历史在地图简报中经常被省略。"
+                },
+                img: "altay.jpg", map: "https://google.com"
+            },
+            {
+                names: { kz: "Жоңғар Алатауы", ru: "Джунгарский Алатау", en: "Dzungarian Alatau", zh: "准噶尔阿拉套山" },
+                etym: {
+                    kz: "'Алатау' — шұбар, түрлі-түсті деген мағына. Транслитерацияда 'Dzungarian' деп берілуі тарихи Жоңғар мемлекетінің атауына негізделген.",
+                    ru: "Алатау означает 'Пестрые горы'. Название 'Джунгарский' — историко-географическая привязка к региону.",
+                    en: "Alatau means 'mottled mountains'. The prefix 'Dzungarian' refers to the historical Dzungar Khanate.",
+                    zh: "阿拉套意为“斑驳的山脉”。前缀“准噶尔”指的是历史上的准噶尔汗国。"
+                },
+                img: "zhungar.jpg", map: "https://google.com"
+
+            },
+            {
+                names: { kz: "Қарқаралы", ru: "Каркаралы", en: "Karkaraly", zh: "卡尔卡拉雷" },
+                etym: {
+                    kz: "Атауы әйелдердің сәндік бас киімі 'Қарқараға' ұқсастығынан шыққан. Транслитерацияда 'Каркаралинск' нұсқасы қала атымен жиі шатастырылады.",
+                    ru: "Названо в честь головного убора 'Карқара'. В картах часто путают ороним с названием города Каркаралинск.",
+                    en: "Named after the 'Karkara' headdress. Often confused with the administrative name of the city in records.",
+                    zh: "以头饰“卡尔卡拉”命名。在记录中常与城市的行政名称混淆。"
+                },
+                img: "karkara.jpg", map: "https://google.com"
+            },
+            {
+                names: { kz: "Тарбағатай", ru: "Тарбагатай", en: "Tarbagatay", zh: "塔尔巴哈台" },
+                etym: {
+                    kz: "Моңғол тілінен аударғанда 'Суырлы тау' (тарбаған — суыр). Атау транслитерацияда өзгермегенімен, оның мағынасы көпшілікке беймәлім.",
+                    ru: "В переводе с монгольского 'Сурочья гора'. Редкий пример сохранения формы при полной потере понимания этимологии носителями.",
+                    en: "Means 'Mountain with Marmots'. A rare case where the name stays intact, but the meaning is forgotten by most.",
+                    zh: "在蒙古语中意为“有旱獭的山”。这是一个罕见的案例，名字保持不变，但其含义被大多数人遗忘。"
+                },
+                img: "tarbagatay.jpg", map: "https://google.com"
+            }
+        ];
+
+        const grid = document.getElementById('catalogGrid');
+        function render() {
+            grid.innerHTML = mountains.map(m => `
+                <div class="glass-card overflow-hidden">
+                    <img src="${m.img}" class="mountain-img" onerror="this.src='https://unsplash.com'">
+                    <div class="p-10">
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="badge-lang">KZ: ${m.names.kz}</span>
+                            <span class="badge-lang">RU: ${m.names.ru}</span>
+                            <span class="badge-lang">EN: ${m.names.en}</span>
+                            <span class="badge-lang">ZH: ${m.names.zh}</span>
+                        </div>
+                        <h2 class="text-4xl font-black mb-8 text-slate-900 border-b pb-4">${m.names.kz} / ${m.names.en}</h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="etymology-box">
+                                <h4 class="font-bold text-blue-600 mb-2 uppercase text-xs tracking-widest">Ғылыми этимология (KZ)</h4>
+                                <p class="text-sm leading-relaxed">${m.etym.kz}</p>
+                            </div>
+                            <div class="etymology-box" style="border-color: #94a3b8;">
+                                <h4 class="font-bold text-slate-500 mb-2 uppercase text-xs tracking-widest">Научная этимология (RU)</h4>
+                                <p class="text-sm leading-relaxed italic">${m.etym.ru}</p>
+                            </div>
+                            <div class="etymology-box" style="border-color: #fbbf24;">
+                                <h4 class="font-bold text-amber-500 mb-2 uppercase text-xs tracking-widest">Scientific Etymology (EN)</h4>
+                                <p class="text-sm leading-relaxed">${m.etym.en}</p>
+                            </div>
+                            <div class="etymology-box" style="border-color: #ef4444;">
+                                <h4 class="font-bold text-red-500 mb-2 uppercase text-xs tracking-widest">科学词源 (ZH)</h4>
+                                <p class="text-sm leading-relaxed">${m.etym.zh}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-10 flex justify-between items-center border-t pt-8">
+                            <a href="${m.map}" target="_blank" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-bold hover:bg-blue-600 transition shadow-xl">
+                                <i class="fas fa-map-marked-alt mr-2"></i> ГЕОЛОКАЦИЯ (MAPS)
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        render();
+    </script>
+</body>
+</html>

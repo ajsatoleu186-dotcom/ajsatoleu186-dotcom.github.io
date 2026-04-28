@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ORONYM PRO | Digital Scientific Archive</title>
+    <script src="https://tailwindcss.com"></script>
+    <link href="https://cloudflare.com" rel="stylesheet">
+    <style>
+        @import url('https://googleapis.com');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: #0f172a;
+            overflow-x: hidden;
+        }
+
+        /* Артқы фондағы динамикалық градиент */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(215, 100%, 95%, 1) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(190, 100%, 95%, 1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(215, 100%, 92%, 1) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(180, 100%, 95%, 1) 0px, transparent 50%);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            border-radius: 40px;
+        }
+
+        .search-box {
+            background: white;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .search-box:focus-within {
+            border-color: #3b82f6;
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .image-card {
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.15);
+        }
+
+        .badge-lang {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="bg-mesh"></div>
+
+    <!-- Navigation -->
+    <nav class="max-w-6xl mx-auto p-8 flex justify-between items-center">
+        <div class="text-2xl font-black tracking-tighter text-blue-600">ORONYM<span class="text-slate-900">.PRO</span></div>
+        <div class="flex gap-4">
+            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 cursor-pointer hover:bg-blue-50 transition">
+                <i class="fas fa-globe text-blue-500"></i>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 cursor-pointer hover:bg-blue-50 transition">
+                <i class="fas fa-info text-blue-500"></i>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-10">
+        <!-- Hero Search Section -->
+        <div class="text-center mb-16">
+            <h1 class="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter">Digital Map.</h1>
+            <div class="max-w-3xl mx-auto search-box p-2 flex items-center rounded-full shadow-2xl">
+                <i class="fas fa-search ml-6 text-gray-300 text-xl"></i>
+                <input type="text" id="mainSearch" placeholder="Тау атауын енгізіңіз (мысалы: Хан Тәңірі)..." 
+                    class="w-full p-6 text-xl bg-transparent outline-none font-medium">
+            </div>
+        </div>
+
+        <!-- Dynamic Content -->
+        <div id="resultArea" class="hidden opacity-0 transform translate-y-10 transition-all duration-1000">
+            <div class="glass-panel p-10 md:p-16 grid grid-cols-1 lg:grid-cols-2 gap-16">
+                
+                <!-- Info Column -->
+                <div class="flex flex-col justify-center">
+                    <div class="space-y-8">
+                        <div>
+                            <div class="badge-lang bg-blue-100 text-blue-600 mb-4 inline-block">4-Language Interface</div>
+                            <h2 id="nameKz" class="text-6xl font-black text-slate-900 mb-2"></h2>
+                            <div class="space-y-2 mt-4">
+                                <p class="text-lg text-slate-500 font-bold">RU: <span id="nameRu" class="text-slate-800 font-normal"></span></p>
+                                <p class="text-lg text-slate-500 font-bold">EN: <span id="nameEn" class="text-slate-800 font-normal"></span></p>
+                                <p class="text-lg text-slate-500 font-bold">ZH: <span id="nameZh" class="text-slate-800 font-normal italic"></span></p>
+                            </div>
+                        </div>
+
+                        <div class="h-px bg-gray-200 w-full"></div>
+
+                        <div class="space-y-6">
+                            <div class="group">
+                                <span class="badge-lang bg-slate-100 text-slate-500">Сипаттама (KZ)</span>
+                                <p id="descKz" class="text-xl text-slate-700 leading-relaxed mt-2 font-medium"></p>
+                            </div>
+                            <div class="group">
+                                <span class="badge-lang bg-slate-50 text-slate-400">Описание (RU)</span>
+                                <p id="descRu" class="text-gray-500 leading-relaxed mt-2 italic"></p>
+                            </div>
+                            <div class="group">
+                                <span class="badge-lang bg-slate-50 text-slate-400">Description (EN)</span>
+                                <p id="descEn" class="text-gray-500 leading-relaxed mt-2"></p>
+                            </div>
+                            <div class="group">
+                                <span class="badge-lang bg-slate-50 text-slate-400">描述 (ZH)</span>
+                                <p id="descZh" class="text-gray-400 leading-relaxed mt-2"></p>
+                            </div>
+                        </div>
+
+                        <div class="pt-6">
+                            <a id="resMap" href="#" target="_blank" class="inline-flex items-center px-10 py-5 bg-blue-600 text-white rounded-full font-bold text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all">
+                                <i class="fas fa-location-arrow mr-3"></i> Картаны ашу
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Column -->
+                <div class="relative flex items-center justify-center">
+                    <div class="absolute w-[120%] h-[120%] bg-blue-100/50 rounded-full blur-3xl -z-10 animate-pulse"></div>
+                    <div class="image-card w-full aspect-[3/4]">
+                        <img id="resImg" src="" alt="" class="w-full h-full object-cover transition duration-1000 hover:scale-110">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const mountains = {
+            "хан тәңірі": {
+                names: { kz: "Хан Тәңірі", ru: "Хан-Тенгри", en: "Khan Tengri", zh: "汗腾格里峰" },
+                desc: {
+                    kz: "Тәңіршілдік нанымындағы ең биік киелі орын. Мағынасы 'Көк әміршісі'.",
+                    ru: "Высшая точка Тянь-Шаня. Название переводится как 'Властелин неба'.",
+                    en: "The highest point of the Tian Shan. Means 'Lord of the Sky'.",
+                    zh: "天山山脉最高点。哈萨克语意为'上苍之王'。"
+                },
+                img: "khan.jpg", map: "https://google.com"
+            },
+            "мұзтау": {
+                names: { kz: "Мұзтау", ru: "Белуха", en: "Belukha", zh: "别卢哈山" },
+                desc: {
+                    kz: "Алтайдың ең биік шыңы. Ақ қарлы, мұзды болғандықтан 'Мұзтау' деп аталады.",
+                    ru: "Высшая точка Алтайских гор. Названа в честь вечного льда и снега.",
+                    en: "The highest mountain in Altai. Refers to the eternal ice covering the peak.",
+                    zh: "阿尔泰山脉的最高峰。名字源于覆盖山顶的永恒冰雪。"
+                },
+                img: "muz.jpg", map: "https://google.com"
+            },
+            "бурабай": {
+                names: { kz: "Бурабай", ru: "Боровое", en: "Burabay", zh: "布拉拜" },
+                desc: {
+                    kz: "Киелі мекен. Аңыз бойынша елін қорғаған қасиетті Бура есімімен аталған.",
+                    ru: "Курортная жемчужина. Название связано с легендой о священном белом верблюде.",
+                    en: "A legendary oasis. Named after a mythical sacred camel named Bura.",
+                    zh: "哈萨克斯坦的一颗明珠。得名于一只名叫'布拉'的神圣骆驼。"
+                },
+                img: "bura.jpg", map: "https://google.com"
+            },
+            "алтай": {
+                names: { kz: "Алтай", ru: "Алтай", en: "Altai", zh: "阿尔泰" },
+                desc: {
+                    kz: "Түркі халықтарының атажұрты. Көне тілде 'Алтын' мағынасын білдіреді.",
+                    ru: "Золотые горы, прародина тюркских народов. Объект ЮНЕСКО.",
+                    en: "The Golden Mountains. Ancestral homeland of the Turkic peoples.",
+                    zh: "黄金之山，突厥民族的摇篮。"
+                },
+                img: "altay.jpg", map: "https://google.com"
+            },
+             "маңғыстау": {
+                names: { kz: "Маңғыстау", ru: "Мангистау", en: "Mangystau", zh: "曼吉斯套" },
+                desc: {
+                    kz: "Ерекше таулы өлке. Атауы 'Мың қыстау' сөзінен шыққан.",
+                    ru: "Уникальный массив у Каспия. Означает 'Тысяча зимовок'.",
+                    en: "Unique landscape near the Caspian. Means 'A thousand wintering places'.",
+                    zh: "里海附近的古老山区。名字意为'一千个冬营地'。"
+                },
+                img: "magystau.jpg", map: "https://google.com"
+            }
+        };
+
+        const input = document.getElementById('mainSearch');
+        const area = document.getElementById('resultArea');
+
+        input.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (mountains[query]) {
+                const m = mountains[query];
+                document.getElementById('nameKz').innerText = m.names.kz;
+                document.getElementById('nameRu').innerText = m.names.ru;
+                document.getElementById('nameEn').innerText = m.names.en;
+                document.getElementById('nameZh').innerText = m.names.zh;
+                
+                document.getElementById('descKz').innerText = m.desc.kz;
+                document.getElementById('descRu').innerText = m.desc.ru;
+                document.getElementById('descEn').innerText = m.desc.en;
+                document.getElementById('descZh').innerText = m.desc.zh;
+                
+                document.getElementById('resImg').src = m.img;
+                document.getElementById('resMap').href = m.map;
+
+                area.classList.remove('hidden');
+                setTimeout(() => {
+                    area.style.opacity = "1";
+                    area.style.transform = "translateY(0)";
+                }, 50);
+            } else {
+                area.style.opacity = "0";
+                area.style.transform = "translateY(10px)";
+                setTimeout(() => area.classList.add('hidden'), 500);
+            }
+        });
+    </script>
+</body>
+</html>
